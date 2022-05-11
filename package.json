@@ -16,5 +16,10 @@
   "bugs": {
     "url": "https://github.com/kjgdhrhrrgg/twitch_bot/issues"
   },
-  "homepage": "https://github.com/kjgdhrhrrgg/twitch_bot#readme"
+  "homepage": "https://github.com/kjgdhrhrrgg/twitch_bot#readme",
+  "dependencies": {
+    "dotenv": "^16.0.0",
+    "tmi.js": "^1.8.5",
+    "xmlhttprequest": "^1.8.0"
+  }
 }
