@@ -6,45 +6,55 @@ var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 const regexpCommand = new RegExp(/^!([a-zA-Z0-9]+)(?:\W+)?(.*)?/);
 const commands = {
 	mmr: {
-		response: (argument) => `MMR von ${argument}: ${getMMR(argument)}`
+		response: (argument) => `MMR of ${argument}: ${getMMR(argument)}`
 	},
 	rank: {
-		response: (argument) => `Rank von ${argument}: ${getRank(argument)}`
+		response: (argument) => `Rank of ${argument}: ${getRank(argument)}`
 	},
 	gang: {
 		response: `187!!!!!!`
 	},
-	garo: {
-		response: `Garo go Bronze!`
-	},
 	help:{
-		response: `Ich bin ein Statsbot für 150 ccm Lounge. Mögliche Commands sind "!mmr <twitch_username>" und "!rank <twitch_username>". Falls eure ID nicht gefunden wird, meldet euch beim Botersteller, damit er euren Twitchusername mit der Loungeliste verknüpfen kann.`
-	} 
+		response: `I'm a twitch bot which can show some stats for 150 ccm Lounge. 
+			Available Commands are "!mmr <twitch_username>" and "!rank <twitch_username>".
+			 If your ID wasn't found, please contact the developer (twitter: @kjg_mk8dx) of this bot, so he can link your twitch username to your lounge username.`
+	},
+	outfit: {
+		response: 'Woah another cute outfit today. Soooo cute'
+	},
+	twitter: {
+		response: "https://twitter.com/kjg_mk8dx"
+	}
 	
 }
 
 function getRank(argument) {
-	var mmr = parseInt(getMMR(argument));
 	var rank = "";
-	if (mmr > 15000) {
-		rank = "Grandmaster";
-	} else if (mmr < 15000 && mmr > 14000) {
-		rank = "Master";
-	} else if (mmr < 14000 && mmr > 12000) {
-		rank = "Diamond";
-	} else if (mmr < 12000 && mmr > 10000) {
-		rank = "Sapphire";
-	} else if (mmr < 10000 && mmr > 8000) {
-		rank = "Platinum";
-	} else if (mmr < 8000 && mmr > 6000) {
-		rank = "Gold";
-	} else if (mmr < 6000 && mmr > 4000) {
-		rank = "Silver";
-	} else if (mmr < 4000 && mmr > 2000) {
-		rank = "Bronze";
-	} else if (mmr < 2000) {
-		rank = "Iron";
+	if (getMMR(argument) == "Player not found.") {
+		rank = getMMR(argument);
 	}
+	else {
+		var mmr = parseInt(getMMR(argument));
+		if (mmr > 15000) {
+			rank = "Grandmaster";
+		} else if (mmr < 15000 && mmr > 14000) {
+			rank = "Master";
+		} else if (mmr < 14000 && mmr > 12000) {
+			rank = "Diamond";
+		} else if (mmr < 12000 && mmr > 10000) {
+			rank = "Sapphire";
+		} else if (mmr < 10000 && mmr > 8000) {
+			rank = "Platinum";
+		} else if (mmr < 8000 && mmr > 6000) {
+			rank = "Gold";
+		} else if (mmr < 6000 && mmr > 4000) {
+			rank = "Silver";
+		} else if (mmr < 4000 && mmr > 2000) {
+			rank = "Bronze";
+		} else if (mmr < 2000) {
+			rank = "Iron";
+		}
+	}	
 	return rank;
 }
 
@@ -83,6 +93,9 @@ function getMMR(argument) {
 		case "leonx200206":
 			id = "22004";
 			break;
+		case "foerbs7":
+			id = "21372";
+			break;
 		default:
 			id = "not";
 	}
@@ -96,7 +109,10 @@ function getMMR(argument) {
 		xhr.onerror = function() {
 			console.error(xhr.status, xhr.statusText);
 		}
-		data7 = xhr.onload = function() {
+		
+		// Scrape MMR of the player
+		
+		xhr.onload = function() {
 			if (xhr.readyState == 4 && xhr.status == 200) {
 				var data3 = xhr.responseText.substring(xhr.responseText.indexOf("MMR</dt>"), xhr.responseText.indexOf("Peak"));
 				var data4 = data3.split("dd");
@@ -106,7 +122,7 @@ function getMMR(argument) {
 		}
 		xhr.send();
 	} else {
-		data7 = "not found.";
+		data7 = "Player not found.";
 	}
 	
 	return data7;
@@ -122,7 +138,7 @@ const client = new tmi.Client({
 		reconnect: true
 	},
 	channels: [
-		'kjgdhrhrrgg', 'darkgaro'
+		'kjgdhrhrrgg', 'darkgaro', 'crossbell', 'mariyohh'
 	]
 });
 
@@ -132,15 +148,15 @@ client.on('message', async (channel, context, message) => {
 	const isNotBot = context.username.toLowerCase() !== process.env.TWITCH_BOT_USERNAME.toLowerCase();
 	
 	if (!isNotBot) return;
-
+	if (message.charAt(0) != "!") return;
+	
 	const [raw, command, argument] = message.match(regexpCommand);
-
 	const { response } = commands[command] || {};
 
-	if (typeof response === 'function') {
-		client.say(channel, response(argument));
-	} else if (typeof response === 'string'){
+	if (typeof response === 'string'){
 		client.say(channel, response)
-	}
+	} else if (typeof response === 'function') {
+		client.say(channel, response(argument));
+	}  
 });
 client.connect();
