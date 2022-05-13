@@ -19,6 +19,7 @@
   "homepage": "https://github.com/kjgdhrhrrgg/twitch_bot#readme",
   "dependencies": {
     "dotenv": "^16.0.0",
+    "request": "^2.88.2",
     "tmi.js": "^1.8.5",
     "xmlhttprequest": "^1.8.0"
   }
