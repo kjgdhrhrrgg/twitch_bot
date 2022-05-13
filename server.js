@@ -2,7 +2,7 @@ const tmi = require('tmi.js');
 require('dotenv').config();
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
-
+const mk8_url = 'https://www.mk8dx-lounge.com/PlayerDetails/';
 const regexpCommand = new RegExp(/^!([a-zA-Z0-9]+)(?:\W+)?(.*)?/);
 const commands = {
 	mmr: {
@@ -13,6 +13,9 @@ const commands = {
 	},
 	gang: {
 		response: `187!!!!!!`
+	},
+	stats: {
+		response: (argument) => `Stats of ${argument}: ${getID(argument)}`
 	},
 	help:{
 		response: `I'm a twitch bot which can show some stats for 150 ccm Lounge. 
@@ -29,85 +32,57 @@ const commands = {
 }
 
 function getRank(argument) {
-	var rank = "";
-	if (getMMR(argument) == "Player not found.") {
-		rank = getMMR(argument);
-	}
-	else {
-		var mmr = parseInt(getMMR(argument));
-		if (mmr > 15000) {
-			rank = "Grandmaster";
-		} else if (mmr < 15000 && mmr > 14000) {
-			rank = "Master";
-		} else if (mmr < 14000 && mmr > 12000) {
-			rank = "Diamond";
-		} else if (mmr < 12000 && mmr > 10000) {
-			rank = "Sapphire";
-		} else if (mmr < 10000 && mmr > 8000) {
-			rank = "Platinum";
-		} else if (mmr < 8000 && mmr > 6000) {
-			rank = "Gold";
-		} else if (mmr < 6000 && mmr > 4000) {
-			rank = "Silver";
-		} else if (mmr < 4000 && mmr > 2000) {
-			rank = "Bronze";
-		} else if (mmr < 2000) {
-			rank = "Iron";
+	var playerList = data_list();
+	var id = "not";
+	for (var i in playerList) {
+		if (argument == playerList[i][0]) {
+			id = playerList[i][1];
+			break
 		}
-	}	
-	return rank;
-}
-
-function getMMR(argument) {
-	switch(argument.toLowerCase()) {
-		case "":
-			id = "23425";
-			break;
-		case "kjgdhrhrrgg":
-			id = "23425";
-			break;
-		case "kjg":
-			id = "23425";
-			break;
-		case "crossbell":
-			id = "27015";
-			break;
-		case "darkgaro":
-			id = "27216";
-			break;
-		case "jut187":
-			id = "19614";
-			break;		
-		case "woif_95":
-			id = "24492";
-			break;
-		case "lennoxx187":
-			id = "21083";
-			break;
-		case "10lea03":
-			id = "23694";
-			break;
-		case "kathi_kqr":
-			id = "22362";
-			break;
-		case "leonx200206":
-			id = "22004";
-			break;
-		case "foerbs7":
-			id = "21372";
-			break;
-		default:
-			id = "not";
 	}
 	if (id != "not") {
-		const url = 'https://www.mk8dx-lounge.com/PlayerDetails/';
 		var data7 = "";
 		var xhr = new XMLHttpRequest();
-		xhr.open("GET", url+id, false);
+		xhr.open("GET", mk8_url+id, false);
 		xhr.responseType = "document";
 		
 		xhr.onerror = function() {
 			console.error(xhr.status, xhr.statusText);
+			data7 = "Website is currenty down";
+		}
+		
+		// Scrape Rank of the player
+		
+		xhr.onload = function() {
+			if (xhr.readyState == 4 && xhr.status == 200) {
+				var data3 = xhr.responseText.substring(xhr.responseText.indexOf("<h1>"), xhr.responseText.indexOf("</h1>"));
+				data7 = data3.substring(data3.indexOf("- ")+2);
+			}
+	
+		}
+		xhr.send();
+	}
+	return data7;
+}
+
+function getMMR(argument) {
+	var playerList = data_list();
+	var id = "not";
+	for (var i in playerList) {
+		if (argument == playerList[i][0]) {
+			id = playerList[i][1];
+			break
+		}
+	}
+	if (id != "not") {
+		var data7 = "";
+		var xhr = new XMLHttpRequest();
+		xhr.open("GET", mk8_url+id, false);
+		xhr.responseType = "document";
+		
+		xhr.onerror = function() {
+			console.error(xhr.status, xhr.statusText);
+			data7 = "Website is currenty down";
 		}
 		
 		// Scrape MMR of the player
@@ -126,6 +101,33 @@ function getMMR(argument) {
 	}
 	
 	return data7;
+}
+
+function getID(argument) {
+	var playerList = data_list();
+	for (var i in playerList) {
+		if (argument == playerList[i][0]) {
+			var id = playerList[i][1];
+			break
+		}
+	}
+	id = mk8_url+id;
+	return id;
+}
+function data_list(){
+	var db = [];
+	var xhr = new XMLHttpRequest();
+	xhr.open("GET", "https://raw.githubusercontent.com/kjgdhrhrrgg/twitch_bot/master/data-list.json", false);
+	xhr.onreadystatechange = function() {
+		if (xhr.readyState == 4 && xhr.status == 200) {
+			var test = JSON.parse(this.responseText);
+			for (var i in test) {
+				db.push([i,test[i]]);
+			}
+		}
+	}
+	xhr.send();
+	return db;
 }
 
 
