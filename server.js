@@ -61,6 +61,8 @@ function getRank(argument) {
 	
 		}
 		xhr.send();
+	} else {
+		data7 = "Player not found."
 	}
 	return data7;
 }
