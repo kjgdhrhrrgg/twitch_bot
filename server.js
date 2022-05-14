@@ -32,10 +32,11 @@ const commands = {
 }
 
 function getRank(argument) {
+	if (argument.charAt(0)== '@') argument = argument.substring(1);
 	var playerList = data_list();
 	var id = "not";
 	for (var i in playerList) {
-		if (argument == playerList[i][0]) {
+		if (argument.toLowerCase() == playerList[i][0]) {
 			id = playerList[i][1];
 			break
 		}
@@ -68,10 +69,11 @@ function getRank(argument) {
 }
 
 function getMMR(argument) {
+	if (argument.charAt(0)== '@') argument = argument.substring(1);
 	var playerList = data_list();
 	var id = "not";
 	for (var i in playerList) {
-		if (argument == playerList[i][0]) {
+		if (argument.toLowerCase() == playerList[i][0]) {
 			id = playerList[i][1];
 			break
 		}
@@ -106,9 +108,10 @@ function getMMR(argument) {
 }
 
 function getID(argument) {
+	if (argument.charAt(0)== '@') argument = argument.substring(1);
 	var playerList = data_list();
 	for (var i in playerList) {
-		if (argument == playerList[i][0]) {
+		if (argument.toLowerCase() == playerList[i][0]) {
 			var id = playerList[i][1];
 			break
 		}
@@ -142,7 +145,7 @@ const client = new tmi.Client({
 		reconnect: true
 	},
 	channels: [
-		'kjgdhrhrrgg', 'darkgaro', 'crossbell', 'mariyohh'
+		'kjgdhrhrrgg', 'darkgaro', 'crossbell', 'mariyohh', 'foerbs7'
 	]
 });
 
