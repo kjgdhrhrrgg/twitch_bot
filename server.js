@@ -32,7 +32,7 @@ const commands = {
 		response: (context, argument) => `${create_livescore(argument)}`
 	},
 	end: {
-		response: `${reset_livescore()}`
+		response: (context, argument) => `${reset_livescore(argument)}`
 	},
 	score: {
 		response: (context, argument) => `${calc_livescore(argument)}`
@@ -92,7 +92,7 @@ function create_livescore(argument) {
 }
 
 
-function reset_livescore(){
+function reset_livescore(argument){
 	teams = [];
 	team_name = [];
 	team_size = null;
