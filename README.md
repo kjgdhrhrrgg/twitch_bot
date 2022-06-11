@@ -3,6 +3,7 @@
 Essential bot for streamer, who play a lot of 150cc Lounge and want to show some stats on stream without switching to Discord. <br/>
 Tutorial how to set up your own bot coming soon. <br/>
 If you already know how to set it up feel free to deploy it by yourself.
+Main feature is having a database, where you can search via the twitch usernames instead of lounge usernames.
 
 # Disclaimer
 
