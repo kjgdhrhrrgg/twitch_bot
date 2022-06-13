@@ -52,9 +52,8 @@ const commands = {
 	},
 	currentscore: {
 		response: (context, argument) => `${getScore(argument)}`
-	},
+	}}
 
-}
 
 /*
 	Functions and co to calculate a table via the chat. Currently only for kjgdhrhrrgg, unless you deploy your own bot with this code.
@@ -150,7 +149,7 @@ function calc_livescore(argument) {
 	Public commands which everyone can use.
 */
 
-var playerList;
+var playerList = data_list();
 
 // Can look up by lounge username for rank, if search for someone via the twitch username -> convert the lounge id to lounge username first
 function getRank(context, argument) {
