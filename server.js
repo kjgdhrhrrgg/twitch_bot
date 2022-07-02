@@ -15,6 +15,9 @@ const commands = {
 	mmr: {
 		response: (context, argument) => `${getMMR(context, argument)}`
 	},
+	peak: {
+		response: (context, argument) => `${getPeak(context,argument)}`
+	},
 	rank: {
 		response: (context, argument) => `${getRank(context, argument)}`
 	},
@@ -225,7 +228,43 @@ function getMMR(context, argument) {
 	xhr.send();
 	return mmr_message;
 	}
-
+// Usage of the api to get the peak mmr of a player,
+//Check the database if username is a twitch user
+function getPeak(context, argument) {
+	if (argument == null || argument == "") argument = context.username.toLowerCase();
+	if (argument.charAt(0)== '@') argument = argument.substring(1);
+	var id=mk8_name_url+argument;
+	if (playerList.some(row => row.includes(argument.toLowerCase()))) id = convert_from_db(argument, mk8_name_url);
+	
+	var peak_message = "";
+	var xhr = new XMLHttpRequest();
+	xhr.open("GET", id, false);
+	xhr.responseType = "document";
+	xhr.onerror = function() {
+		console.error(xhr.status, xhr.statusText);
+		peak_message = "Website is currently down";
+	}		
+	xhr.onload = function() {
+		if (xhr.readyState == 4 && xhr.status == 200) {
+			var json_data = JSON.parse(this.responseText);
+			var data= [];
+			for (var i in json_data) {
+				data.push([i,json_data[i]]);
+			} 
+			peak_message = `Peak MMR of ${argument}: Player not found`;
+			if(data.some(row => row.includes("maxMmr"))) {
+				for(var i in data) {
+					if (data[i][0] == 'maxMmr') {
+						peak_message = `Peak MMR of ${argument}: ${data[i][1]}`;
+						break;
+					}	
+				}	
+			}
+		}
+	}
+	xhr.send();
+	return peak_message;
+	}
 // Sends the stats page of a certain user.
 // Use the api to get the lounge id of the user
 
@@ -477,8 +516,8 @@ function help(argument) {
 		case "db":
 			help_msg = "The db command will show you if you are in the current database. Use !db to look up if you are in there yet, !db <twitch_name> to check if this user is in database";
 			break;
-		case "outfit":
-			help_msg = "Will send a random compliment to @Mariyohh about her outfit. Currently 4 compliments included"
+		case "peak":
+			help_msg = "The peak command will show the max mmr reached of a certain player."
 			break;
 		default:
 			help_msg = "Available commands to look up: !mmr !rank !stats !lm !db";
