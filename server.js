@@ -520,7 +520,7 @@ function help(argument) {
 			help_msg = "The peak command will show the max mmr reached of a certain player."
 			break;
 		default:
-			help_msg = "Available commands to look up: !mmr !rank !stats !lm !db";
+			help_msg = "Available commands to look up: !mmr !rank !stats !lm !db !peak";
 	}
 	return help_msg;
 }
