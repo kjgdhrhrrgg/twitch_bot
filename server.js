@@ -80,7 +80,7 @@ function getTeamNames(argument) {
 }
 function getScore(argument) {
 	if (argument == null || argument == "")
-	var score_message	 = ``;
+	var score_message= ``;
 	for (var i = 1; i <= teams.length; i++) {
 		score_message += `Team ${team_name[i-1]}: ${teams[i-1]} `
 		if (i != teams.length) score_message += "| "
@@ -111,6 +111,7 @@ function reset_livescore(argument){
 }
 
 function calc_livescore(argument) {
+	if (argument == null || argument == " ") return getScore(argument)
 	var message;
 	var data = argument.split(",");
 	var split_counter = argument.split(",").length;
