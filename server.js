@@ -313,7 +313,7 @@ function getFC(context, argument) {
 	if (argument == null || argument == "") argument = context.username.toLowerCase();
 	if (argument.charAt(0)== '@') argument = argument.substring(1);
 	var id=mk8_name_url+argument;
-	if (playerList.some(row => row.includes(argument.toLowerCase()))) id = convert_from_db(argument, mk8_stats_url);
+	if (playerList.some(row => row.includes(argument.toLowerCase()))) id = convert_from_db(argument, mk8_name_url);
 	
 	var fc_message = "";
 	var xhr = new XMLHttpRequest();
