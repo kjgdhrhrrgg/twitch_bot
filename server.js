@@ -33,6 +33,9 @@ const commands = {
 	lm: {
 		response: (context, argument) => `${lm(context, argument)}`
 	},
+	fc: {
+		response: (context, argument) => `${fc(context, argument)}`
+	},
 	/*
 	nh: {
 		response: (context, argument) => `${nh(context, argument)}`
@@ -230,7 +233,7 @@ function getMMR(context, argument) {
 	return mmr_message;
 	}
 // Usage of the api to get the peak mmr of a player,
-//Check the database if username is a twitch user
+// Check the database if username is a twitch user
 function getPeak(context, argument) {
 	if (argument == null || argument == "") argument = context.username.toLowerCase();
 	if (argument.charAt(0)== '@') argument = argument.substring(1);
@@ -304,6 +307,43 @@ function getID(context, argument) {
 	xhr.send();
 	return id_message;
 }
+
+// Grab friendcode, dunno why Im buildiung this feature
+function getFC(context, argument) {
+	if (argument == null || argument == "") argument = context.username.toLowerCase();
+	if (argument.charAt(0)== '@') argument = argument.substring(1);
+	var id=mk8_name_url+argument;
+	if (playerList.some(row => row.includes(argument.toLowerCase()))) id = convert_from_db(argument, mk8_stats_url);
+	
+	var fc_message = "";
+	var xhr = new XMLHttpRequest();
+	xhr.open("GET", id, false);
+	xhr.responseType = "document";
+	xhr.onerror = function() {
+		console.error(xhr.status, xhr.statusText);
+		fc_message = "Website is currently down";
+	}
+		
+		
+	xhr.onload = function() {
+		if (xhr.readyState == 4 && xhr.status == 200) {
+			var json_data = JSON.parse(this.responseText);
+			var data= [];
+			for (var i in json_data) {
+				data.push([i,json_data[i]]);
+			} 
+			if (data.length == 4) {
+				fc_message = `Rank of ${argument}: Not found.`;
+			} else {
+				fc_message = `Rank of ${argument}: ${data[data.length-4][1]}`;
+			}
+
+		}
+	}
+	xhr.send();
+	return fc_message;
+}
+
 
 // Function to load the database and converts to javascript array 
 // don't know if this part is skipable (maybe through jQuery but idk) once it got updated. (It should, but I'm not sure)
