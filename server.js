@@ -333,9 +333,9 @@ function getFC(context, argument) {
 				data.push([i,json_data[i]]);
 			} 
 			if (data.length == 4) {
-				fc_message = `Rank of ${argument}: Not found.`;
+				fc_message = `Friendcode of ${argument}: Not found.`;
 			} else {
-				fc_message = `Rank of ${argument}: ${data[data.length-4][1]}`;
+				fc_message = `Friendcode of ${argument}: ${data[data.length-4][1]}`;
 			}
 
 		}
