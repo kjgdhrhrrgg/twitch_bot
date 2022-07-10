@@ -34,7 +34,7 @@ const commands = {
 		response: (context, argument) => `${lm(context, argument)}`
 	},
 	fc: {
-		response: (context, argument) => `${fc(context, argument)}`
+		response: (context, argument) => `${getFC(context, argument)}`
 	},
 	/*
 	nh: {
