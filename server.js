@@ -36,11 +36,11 @@ const commands = {
 	fc: {
 		response: (context, argument) => `${getFC(context, argument)}`
 	},
-	/*
+	
 	nh: {
 		response: (context, argument) => `${nh(context, argument)}`
 	},
-	*/
+	
 	
 	// Scoreboard commands (currently in beta)
 	
@@ -275,8 +275,8 @@ function getPeak(context, argument) {
 function getID(context, argument) {
 	if (argument == null || argument == "") argument = context.username.toLowerCase();
 	if (argument.charAt(0)== '@') argument = argument.substring(1);
-	var id=mk8_name_url+argument;
-	if (playerList.some(row => row.includes(argument.toLowerCase()))) id = convert_from_db(argument, mk8_name_url);
+	var id=mk8_stats_url+argument;
+	if (playerList.some(row => row.includes(argument.toLowerCase()))) id = convert_from_db(argument, mk8_stats_url);
 
 	var id_message = "";
 	var xhr = new XMLHttpRequest();
@@ -292,16 +292,12 @@ function getID(context, argument) {
 			var data= [];
 			for (var i in json_data) {
 				data.push([i,json_data[i]]);
-			} 
-			id_message = `Stats page of ${argument}: Player not found`;
-			if(data.some(row => row.includes("id"))) {
-				for(var i in data) {
-					if (data[i][0] == 'id') {
-						id_message = `Stats page of ${argument}: ${mk8_url+data[i][1]}`;
-						break;
-					}	
-				}	
 			}
+			if (data.length == 28) id_message = `Stats of ${argument}: Winrate ${data[12][1]} | `;
+			else {
+				id_message = `Stats page of ${argument}: kj is just too lazy to implement methods for placement/inactive players`;
+			}
+			console.log(data);
 		}
 	}
 	xhr.send();
@@ -312,8 +308,8 @@ function getID(context, argument) {
 function getFC(context, argument) {
 	if (argument == null || argument == "") argument = context.username.toLowerCase();
 	if (argument.charAt(0)== '@') argument = argument.substring(1);
-	var id=mk8_name_url+argument;
-	if (playerList.some(row => row.includes(argument.toLowerCase()))) id = convert_from_db(argument, mk8_name_url);
+	var id=mk8_stats_url+argument;
+	if (playerList.some(row => row.includes(argument.toLowerCase()))) id = convert_from_db(argument, mk8_stats_url);
 	
 	var fc_message = "";
 	var xhr = new XMLHttpRequest();
@@ -335,7 +331,7 @@ function getFC(context, argument) {
 			if (data.length == 4) {
 				fc_message = `Friendcode of ${argument}: Not found.`;
 			} else {
-				fc_message = `Friendcode of ${argument}: ${data[data.length-4][1]}`;
+				fc_message = `Friendcode of ${argument}: ${data[5][1]}`;
 			}
 
 		}
@@ -478,9 +474,9 @@ function lm(context, argument) {
 }
 
 // Name history doesn't work as intented, have to look after my exams
+// Kinda works now, thanks to @Chaos375 
 
 
-/*
 function nh(context, argument) {
 	if (argument == null || argument == "") argument = context.username.toLowerCase();
 	if (argument.charAt(0)== '@') argument = argument.substring(1);
@@ -508,25 +504,12 @@ function nh(context, argument) {
 				data.push([i,json_data[i]]);
 			}
 			for (var i in data[data.length-3][1]) {
-				names.push(data[data.length-3][1][i])
+				names.push(data[data.length-3][1][i].name)
 			}
-			for (var i in names) {
-				test.push(names[i]);
-			}
-			console.log(names[0].substring(6));
-			//names = data[data.length-3][1][];
-			//console.log(data[data.length-3][1][0]);
-			//console.log(names);
-			//console.log(test);
-			
-
-
-
-
 			if (data.length == 4) {
 				nh_message = `Name history of ${argument}: Not found.`;
 			} else {
-				nh_message = `Name history of ${argument}: ${data[data.length-3][1]}`;
+				nh_message = `Name history of ${argument}: ${names}`;
 			}
 
 		}
@@ -535,7 +518,7 @@ function nh(context, argument) {
 	return nh_message;
 }
 
-*/
+
 // Show all help messages
 
 function help(argument) {
@@ -558,7 +541,10 @@ function help(argument) {
 			help_msg = "The db command will show you if you are in the current database. Use !db to look up if you are in there yet, !db <twitch_name> to check if this user is in database";
 			break;
 		case "peak":
-			help_msg = "The peak command will show the max mmr reached of a certain player."
+			help_msg = "The peak command will show the max mmr reached of a certain player.";
+			break;
+		case "nh":
+			help_msg = "The nh command will show all the usernames, which the player used on this account?";
 			break;
 		default:
 			help_msg = "Available commands to look up: !mmr !rank !stats !lm !db !peak";
