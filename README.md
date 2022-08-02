@@ -1,15 +1,20 @@
 # Info
 
 Essential bot for streamer, who plays a lot of 150cc Lounge and want to show some stats on stream without switching to Discord. <br/>
-Tutorial how to set up your own bot coming soon. <br/>
+This bot uses tmi.js in order to listen to chat and send messages. <br/>
 If you already know how to set it up feel free to deploy it by yourself. (Don't forget to setup the env variables) <br/>
 Main feature is having a database, which links a twitch user to a certain lounger player, <br/>
 so you can search the lounge data via lounge username and twitch username.
 
 # Setup
 
+1. Create an account on [heroku.com](https://signup.heroku.com/)
+2. Get your oAuth Token [here](https://twitchtokengenerator.com). The token you need to copy is the **ACCESS TOKEN**
+3. Click this to deploy the bot on heroku and fill out the required information.
+
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/kjgdhrhrrgg/twitch_bot)
 
+4. still dont know if this is enough already
 
 # Disclaimer
 
