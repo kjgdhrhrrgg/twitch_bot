@@ -9,11 +9,11 @@
     "description": "show some lounge stats from the current season of 150 cc mk8dx lounge in your twitch stream. (beta)",
     "env": {
         "TWITCH_BOT_USERNAME": {
-            "description": "Account name of twitch account",
+            "description": "Account name of twitch account, which sends the messages to the chat",
             "required": true
         },
         "TWITCH_OAUTH_TOKEN" : {
-            "description": "OAuth token of twitch account",
+            "description": "oAuth token of twitch account, which sends the messages to the chat",
             "required": true
         },
         "TWITCH_SUPPORTED_CHANNELS": {
