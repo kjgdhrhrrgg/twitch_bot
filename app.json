@@ -1,5 +1,11 @@
 {
     "name": "mk8dx_twitch_bot",
+    "repository": "https://github.com/kjgdhrhrrgg/twitch_bot",
+    "buildpacks": [ 
+        {
+            "url": "heroku/nodejs"
+        }
+    ],
     "description": "show some lounge stats from the current season of 150 cc mk8dx lounge in your twitch stream. (beta)",
     "env": {
         "TWITCH_BOT_USERNAME": {
