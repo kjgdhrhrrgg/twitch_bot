@@ -14,7 +14,7 @@ so you can search the lounge data via lounge username and twitch username.
 2.1 You are there to get a **bot chat token**.<br/>
 2.2 The token you need to copy is the **ACCESS TOKEN**.<br/>
 
-3. Click this to deploy the bot on heroku and fill out the required information.
+3. Click this to deploy the bot on heroku and fill out the required information. <br/>
 3.1 You can name it whatever you want, so you can recognize the project if you log in to heroku.<br/>
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/kjgdhrhrrgg/twitch_bot) <br/>
