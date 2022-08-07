@@ -8,17 +8,17 @@ so you can search the lounge data via lounge username and twitch username.
 
 # Setup
 
-1. Create an account on [heroku.com](https://signup.heroku.com/)
+1. Create an account on [heroku.com](https://signup.heroku.com/).
+
 2. Get your oAuth Token [here](https://twitchtokengenerator.com). 
-2.1 You are there to get a **bot chat token**
-2.2 The token you need to copy is the **ACCESS TOKEN** 
+2.1 You are there to get a **bot chat token**.
+2.2 The token you need to copy is the **ACCESS TOKEN**.
+
 3. Click this to deploy the bot on heroku and fill out the required information.
-
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/kjgdhrhrrgg/twitch_bot)
-
 3.1 You can name it whatever you want, so you can recognize the project if you log in to heroku
 
-4. still dont know if this is enough already
+4. 
 
 # Disclaimer
 
@@ -31,10 +31,9 @@ so only a few Streamer are supported currently.
 
 # Plan for the future
 
-Command to look up players' history name <br/>
 Command to show wr time trials (150 and 200cc) <br/>
 Overlay for live scores, controlled via the twitch chat
 
 # Support 
 
-If you like my work here and want to support me, feel free to leave a donation: https://paypal.me/kjgdhrhrrgg <br/>
+If you like my work and want to support me, feel free to leave a donation: https://paypal.me/kjgdhrhrrgg <br/>
