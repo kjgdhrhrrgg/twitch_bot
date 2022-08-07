@@ -4,9 +4,12 @@ Essential bot for streamer, who plays a lot of 150cc Lounge and want to show som
 This bot uses tmi.js in order to listen to chat and send messages. <br/>
 If you already know how to set it up feel free to deploy it by yourself. (Don't forget to setup the env variables) <br/>
 Main feature is having a database, which links a twitch user to a certain lounger player, <br/>
-so you can search the lounge data via lounge username and twitch username.
+so you can search the lounge data via lounge username and twitch username. <br/>
+Use "!help" in your twitch chat to look up how to use the bot. <br/>
 
-# Setup
+
+
+# Setup with heroku
 
 1. Create an account on [heroku.com](https://signup.heroku.com/).
 
@@ -20,9 +23,15 @@ so you can search the lounge data via lounge username and twitch username.
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/kjgdhrhrrgg/twitch_bot) <br/>
 
 
-4. Go to "Manage App" and then navigate to the Resources Tab.
-5. Disable "web npm start" and enable "worker npm start".
+4. Go to "Manage App" and then navigate to the Resources tab.
+5. **Disable** "web npm start" and **enable** "worker npm start".
 6. The bot should be running 24/7 now.
+7. Automatic updates aren't here yet. So if I update the bot, you have to manually delete the current version of the bot and deploy it from here again. 
+
+
+# Setup local
+
+I'm too lazy currently lol.
 
 # Disclaimer
 
