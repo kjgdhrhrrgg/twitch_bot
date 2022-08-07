@@ -15,10 +15,10 @@ so you can search the lounge data via lounge username and twitch username.
 2.2 The token you need to copy is the **ACCESS TOKEN**.<br/>
 
 3. Click this to deploy the bot on heroku and fill out the required information.
+3.1 You can name it whatever you want, so you can recognize the project if you log in to heroku.<br/>
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/kjgdhrhrrgg/twitch_bot) <br/>
 
-3.1 You can name it whatever you want, so you can recognize the project if you log in to heroku.<br/>
 
 4. Go to "Manage App" and then navigate to the Resources Tab.
 5. Disable "web npm start" and enable "worker npm start".
