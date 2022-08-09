@@ -297,7 +297,6 @@ function getID(context, argument) {
 			else {
 				id_message = `Stats page of ${argument}: kj is just too lazy to implement methods for placement/inactive players`;
 			}
-			console.log(data);
 		}
 	}
 	xhr.send();
