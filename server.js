@@ -330,7 +330,7 @@ function getFC(context, argument) {
 			if (data.length == 4) {
 				fc_message = `Friendcode of ${argument}: Not found.`;
 			} else {
-				fc_message = `Friendcode of ${argument}: ${data[5][1]}`;
+				fc_message = `Friendcode of ${argument}: ${data[6][1]}`;
 			}
 
 		}
