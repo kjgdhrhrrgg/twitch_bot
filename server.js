@@ -502,8 +502,8 @@ function nh(context, argument) {
 			for (var i in json_data) {
 				data.push([i,json_data[i]]);
 			}
-			for (var i in data[data.length-3][1]) {
-				names.push(data[data.length-3][1][i].name)
+			for (var i in data[data.length-4][1]) {
+				names.push(data[data.length-4][1][i].name)
 			}
 			if (data.length == 4) {
 				nh_message = `Name history of ${argument}: Not found.`;
