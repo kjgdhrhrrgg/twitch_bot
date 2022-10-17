@@ -581,3 +581,4 @@ client.on('message', async (channel, context, message) => {
 	}  
 });
 client.connect();
+console.log(process.env.TWITCH_SUPPORTED_CHANNELS);
