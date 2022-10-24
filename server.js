@@ -160,6 +160,7 @@ var playerList = data_list();
 
 // Can look up by lounge username for rank, if search for someone via the twitch username -> convert the lounge id to lounge username first
 function getRank(context, argument) {
+	console.log(context);
 	if (argument == null || argument == "") argument = context.username.toLowerCase();
 	if (argument.charAt(0)== '@') argument = argument.substring(1);
 	var id=mk8_stats_url+argument;
@@ -185,7 +186,7 @@ function getRank(context, argument) {
 			if (data.length == 4) {
 				rank_message = `Rank of ${argument}: Not found.`;
 			} else {
-				rank_message = `Rank of ${argument}: ${data[data.length-2][1]}`;
+				rank_message = `Rank of ${argument}: ${data[data.length-3][1]}`;
 			}
 
 		}
