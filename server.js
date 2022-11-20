@@ -529,13 +529,13 @@ function help(argument) {
 			help_msg = "The mmr command will show the MMR of a certain player for 150 cc Lounge. Use !mmr to show your own MMR, !mmr <twitch_name/lounge_name> for that users MMR";
 			break;
 		case "rank": 
-			help_msg = "The rank command will show the MMR of a certain player for 150 cc Lounge. Use !rank to show your own Rank, !rank <twitch_name/lounge_name> for that users rank";
+			help_msg = "The rank command will show the rank of a certain player for 150 cc Lounge. Use !rank to show your own Rank, !rank <twitch_name/lounge_name> for that users rank";
 			break;		
 		case "lm": 
 			help_msg = "The lm command will show the last match of a certain player for 150 cc Lounge. Use !lm to show your own last match, !lm <twitch_name/lounge_name> for that users last match";
 			break;	
 		case "stats": 
-			help_msg = "The mmr command will show the MMR of a certain player for 150 cc Lounge. Use !mmr to show your own MMR, !mmr <twitch_name/lounge_name> for that users MMR";
+			help_msg = "The stats command will show some stats of a certain player for 150 cc Lounge. Use !stats to show your own stats, !stats <twitch_name/lounge_name> for that users stats";
 			break;	
 		case "db":
 			help_msg = "The db command will show you if you are in the current database. Use !db to look up if you are in there yet, !db <twitch_name> to check if this user is in database";
