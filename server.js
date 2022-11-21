@@ -294,7 +294,7 @@ function getID(context, argument) {
 			for (var i in json_data) {
 				data.push([i,json_data[i]]);
 			}
-			if (data.length == 28) id_message = `Stats of ${argument}: Winrate ${data[12][1]} | `;
+			if (data.length == 30) id_message = `Stats of ${argument}: Winrate ${data[12][1]} | `;
 			else {
 				id_message = `Stats page of ${argument}: kj is just too lazy to implement methods for placement/inactive players`;
 			}
