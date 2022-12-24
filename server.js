@@ -556,18 +556,20 @@ function help(argument) {
 
 const app = express();
 
+const port = process.env.PORT || 3000;
+
 app.get('/', (req, res) => {
 	res.sendFile(path.join(__dirname, 'index.html'));
   });
   
-  app.post('/mmr', (req, res) => {
+app.post('/mmr', (req, res) => {
 	const username = req.body.username;
 	const mmrData = getMMR(null, username);
 	res.send(mmrData);
   });
   
-  app.listen(3000, () => {
-	console.log('Server listening on port 3000');
+app.listen(port, () => {
+	console.log(`Express app listening on port ${port}`);
   });
 
 
