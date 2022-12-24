@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>MMR Data</title>
+  </head>
+  <body>
+    <div id="mmr-data"></div>
+    <script>
+      const username = new URLSearchParams(window.location.search).get('username');
+      fetch(`/mmr?username=${username}`)
+        .then(response => response.text())
+        .then(data => {
+          document.getElementById('mmr-data').innerHTML = data;
+        });
+    </script>
+  </body>
+</html>

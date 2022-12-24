@@ -1,4 +1,5 @@
 const tmi = require('tmi.js');
+const express = require('express');
 require('dotenv').config();
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
@@ -553,6 +554,24 @@ function help(argument) {
 }
 
 
+const app = express();
+
+app.get('/', (req, res) => {
+	res.sendFile(path.join(__dirname, 'index.html'));
+  });
+  
+  app.post('/mmr', (req, res) => {
+	const username = req.body.username;
+	const mmrData = getMMR(null, username);
+	res.send(mmrData);
+  });
+  
+  app.listen(3000, () => {
+	console.log('Server listening on port 3000');
+  });
+
+
+
 const client = new tmi.Client({
 	identity: {
 		username: process.env.TWITCH_BOT_USERNAME,
@@ -582,3 +601,6 @@ client.on('message', async (channel, context, message) => {
 	}  
 });
 client.connect();
+
+
+
