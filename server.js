@@ -33,7 +33,7 @@ const commands = {
 	lm: {
 		response: (context, argument) => `${lm(context, argument)}`
 	},
-	fc: {
+	fclounge: {
 		response: (context, argument) => `${getFC(context, argument)}`
 	},
 	
