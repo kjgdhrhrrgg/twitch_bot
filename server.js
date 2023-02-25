@@ -287,6 +287,7 @@ function convert_from_db(argument, link) {
 		}
 	}
 	xhr.send();
+	console.log(id_message);
 	return id_message;
 }
 
