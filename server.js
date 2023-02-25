@@ -2,7 +2,6 @@ const tmi = require('tmi.js');
 require('dotenv').config();
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
-const mk8_url = 'https://www.mk8dx-lounge.com/PlayerDetails/';
 const mk8_id_url = 'https://www.mk8dx-lounge.com/api/player?mkcId=';
 const mk8_name_url = 'https://www.mk8dx-lounge.com/api/player?name=';
 const mk8_stats_url = 'https://www.mk8dx-lounge.com/api/player/details?name=';
@@ -39,118 +38,8 @@ const commands = {
 	
 	nh: {
 		response: (context, argument) => `${nh(context, argument)}`
-	},
-	
-	
-	// Scoreboard commands (currently in beta)
-	
-	start: {
-		response: (context, argument) => `${create_livescore(argument)}`
-	},
-	end: {
-		response: (context, argument) => `${reset_livescore(argument)}`
-	},
-	score: {
-		response: (context, argument) => `${calc_livescore(argument)}`
-	},
-	teams: {
-		response: (context, argument) => `${getTeamNames(argument)}`
-	},
-	currentscore: {
-		response: (context, argument) => `${getScore(argument)}`
-	}}
-
-
-/*
-	Functions and co to calculate a table via the chat. Currently only for kjgdhrhrrgg, unless you deploy your own bot with this code.
-*/
-
-
-var team_name = [];
-var teams = [];
-var amount_of_teams;
-var race_counter = 0;
-var points = [15,12,10,9,8,7,6,5,4,3,2,1];
-
-function getTeamNames(argument) {
-	if (argument == null || argument == "")
-	var teamnames_message = ``;
-	for (var i = 1; i <= team_name.length; i++) {
-		teamnames_message += `Team ${i}: ${team_name[i-1]} `
-		if (i != teams.length) teamnames_message += "| "
 	}
-	return teamnames_message;
 }
-function getScore(argument) {
-	if (argument == null || argument == "")
-	var score_message= ``;
-	for (var i = 1; i <= teams.length; i++) {
-		score_message += `Team ${team_name[i-1]}: ${teams[i-1]} `
-		if (i != teams.length) score_message += "| "
-	}
-	return score_message;	
-}
-
-function create_livescore(argument) {
-	var cls_message;
-	if (argument == null || argument == "") cls_message = "Please write all tags after the command."
-	else {
-		team_name = argument.split(",");
-		amount_of_teams = argument.split(",").length;
-		team_size = 12/amount_of_teams;
-		teams = new Array(amount_of_teams).fill(0);
-		race_counter = 1;
-		cls_message = `Scoreboard for ${amount_of_teams} teams was created.`
-	} 
-	return cls_message;
-}
-
-function reset_livescore(argument){
-	teams = [];
-	team_name = [];
-	team_size = null;
-	race_counter = 0;
-	return "Scoreboard successfully resetted.";
-}
-
-function calc_livescore(argument) {
-	if (argument == null || argument == " ") return getScore(argument)
-	var message;
-	var data = argument.split(",");
-	var split_counter = argument.split(",").length;
-	var sum = eval(data.join('+'))-data[0];
-	switch(amount_of_teams) {
-		case 2:
-			checker = 18;
-			break;
-		case 3: 
-			checker = 24;
-			break;
-		case 4:
-			checker = 30;
-			break;
-		case 6:
-			checker = 42;
-			break;
-	}
-
-	// Check if every placement is there
-	if (sum != checker) message = "U sure u got the right placements?";
-	else if (split_counter != 13) message = "U sure u got the right amount of scores?";
-	else if (parseInt(data[0]) != race_counter) message = "U sure u got the right race?";
-	// calc the table
-	else {
-		for (var i = 1; i < split_counter; i++ ) {
-			teams[parseInt(data[i])-1] += points[i-1]
-		}
-		message = getScore("");
-		if (race_counter == 12) message += " | Finished mogi."
-		if (race_counter < 13) race_counter++;
-	}
-	return message;
-}
-
-
 
 /*
 	Public commands which everyone can use.
@@ -371,6 +260,7 @@ function convert_from_db(argument, link) {
 			break
 		}
 	}
+	console.log(id);
 	var id_message = "";
 	var xhr = new XMLHttpRequest();
 	xhr.open("GET", id, false);
