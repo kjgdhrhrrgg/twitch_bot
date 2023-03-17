@@ -182,7 +182,9 @@ function getID(context, argument) {
 			var data= [];
 			for (var i in json_data) {
 				data.push([i,json_data[i]]);
+				
 			}
+			console.log(data);
 			if (data.length == 30) id_message = `Stats of ${argument}: Winrate ${data[13][1]} | `;
 			else {
 				id_message = `Stats page of ${argument}: kj is just too lazy to implement methods for placement/inactive players`;
