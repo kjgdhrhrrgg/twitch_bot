@@ -338,7 +338,6 @@ function lm(context, argument) {
 			} 
 			for (var j in data) {
 				if (data[j][0] == "mmrChanges")
-					console.log(data[j][2][0]);
 					for (var k in data[j][1][0])
 						lm_data.push([k,data[j][1][0][k]])
 			} 
