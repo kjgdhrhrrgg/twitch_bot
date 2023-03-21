@@ -262,7 +262,6 @@ function convert_from_db(argument, link) {
 			break
 		}
 	}
-	console.log(id);
 	var id_message = "";
 	var xhr = new XMLHttpRequest();
 	xhr.open("GET", id, false);
@@ -339,9 +338,11 @@ function lm(context, argument) {
 			} 
 			for (var j in data) {
 				if (data[j][0] == "mmrChanges")
+					console.log(data[j][2][0]);
 					for (var k in data[j][1][0])
 						lm_data.push([k,data[j][1][0][k]])
 			} 
+			console.log(lm_data);
 			
 			if (lm_data.length == 11) {
 				var win = "Lose";
@@ -391,7 +392,6 @@ function nh(context, argument) {
 			var json_data = JSON.parse(this.responseText);
 			var data = [];
 			var names = [];
-			var test = [];
 			
 			for (var i in json_data) {
 				data.push([i,json_data[i]]);
