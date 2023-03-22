@@ -341,10 +341,8 @@ function lm(context, argument) {
 				if (data[j][0] == "mmrChanges")
 					for (var k in data[j][1][0])
 						lm_data.push([k,data[j][1][0][k]])
-						test_data.push([k,data[j][1][0][k]])
 			} 
 			console.log(lm_data);
-			console.log(test_data);
 			
 			if (lm_data.length == 11) {
 				var win = "Lose";
