@@ -46,7 +46,6 @@ const commands = {
 */
 
 var playerList = data_list();
-
 // Can look up by lounge username for rank, if search for someone via the twitch username -> convert the lounge id to lounge username first
 function getRank(context, argument) {
 	console.log(context);
@@ -238,10 +237,11 @@ function getFC(context, argument) {
 function data_list(){
 	var db = [];
 	var xhr = new XMLHttpRequest();
-	xhr.open("GET", "https://raw.githubusercontent.com/kjgdhrhrrgg/twitch_bot/master/data-list.json", false);
+	xhr.open("GET", "https://raw.githubusercontent.com/kjgdhrhrrgg/twitch_bot_db/master/data-list.json", false);
 	xhr.onreadystatechange = function() {
 		if (xhr.readyState == 4 && xhr.status == 200) {
 			var test = JSON.parse(this.responseText);
+			console.log(test);
 			for (var i in test) {
 				db.push([i,test[i]]);
 			}
@@ -304,11 +304,18 @@ function database(context, argument) {
 
 }
 
-// Get data from latest mogi 
+// Get data from any mogi 
 
 
 function lm(context, argument) {
 	if (argument == null || argument == "") argument = context.username.toLowerCase();
+	var arg = [];
+	var lmarg = ["",""];
+	if (argument.includes(",")) {
+		arg = argument.split(',');
+		argument = arg[1];
+	}
+	console.log(argument);
 	if (argument.charAt(0)== '@') argument = argument.substring(1);
 	var id = mk8_stats_url+argument;
 	if (playerList.some(row => row.includes(argument.toLowerCase()))) id = convert_from_db(argument, mk8_stats_url);
@@ -331,33 +338,25 @@ function lm(context, argument) {
 	xhr.onload = function() {
 		if (xhr.readyState == 4 && xhr.status == 200) {
 			var json_data = JSON.parse(this.responseText);
-			var data = [];
-			var lm_data = [];
-			var test_data = [];
-			for (var i in json_data) {
-				data.push([i,json_data[i]]);
-			} 
-			for (var j in data) {
-				if (data[j][0] == "mmrChanges")
-					for (var k in data[j][1][0])
-						lm_data.push([k,data[j][1][0][k]])
-			} 
-			console.log(lm_data);
-			
-			if (lm_data.length == 11) {
-				var win = "Lose";
-				var format = `${lm_data[6][1].length + 1}v${lm_data[6][1].length + 1}`;
-				if (lm_data[10][1] == 12) format = "FFA";
-				if (lm_data[2][1]>=0) win = "Win"
-				// Last Match of kjg: Win | Format:  EF 3v3 | Score: 105 | Team Placement: 1
-				lm_message = `Last Match of ${argument}: ${win} (${lm_data[2][1]} MMR) | 
-				Format: Tier ${lm_data[9][1]} ${format} | 
-				own Score: ${lm_data[5][1]} | 
-				Team Placement: ${lm_data[8][1]} of ${lm_data[10][1]} | 
-				TableID: ${mk8_table+lm_data[0][1]}`;
-			}
-			else {
-				lm_message = `Last Match of ${argument}: Match cannot be found`
+			var testIndex = arg[0]-1;
+			if (json_data.mmrChanges && json_data.mmrChanges[testIndex] && testIndex > 0) {
+  				var item = json_data.mmrChanges[testIndex];
+				var win = 'Lose';
+				var format = 'FFA';
+				if (item.mmrDelta >= 0) win = 'Win';
+				if (item.partnerIds.length > 0 ) format = `${item.partnerIds.length + 1}v${item.partnerIds.length + 1}`
+				if (item.reason == 'Table') {
+					lm_message = `Last Match of ${argument}: ${win} (${item.mmrDelta} MMR) |
+					Format: Tier ${item.tier} ${format} |
+					own Score: ${item.score} |
+					Team Placement: ${item.rank} of ${item.numTeams} |
+					TableID: ${mk8_table+item.changeId} `
+				} else {
+					lm_message = "Last Match is either a strike, placement or not found."
+				}
+
+			} else {
+				lm_message = "Last Match is either a strike, placement or not found."
 			}
 		}
 	}
