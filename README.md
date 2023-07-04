@@ -8,27 +8,6 @@ so you can search the lounge data via lounge username and twitch username. <br/>
 Use "!help" in your twitch chat to look up how to use the bot. <br/>
 
 
-
-# Setup with heroku
-
-1. Create an account on [heroku.com](https://signup.heroku.com/).
-
-2. Get your oAuth Token [here](https://twitchtokengenerator.com). <br/>
-2.1 You are there to get a **bot chat token**.<br/>
-2.2 The token you need to copy is the **ACCESS TOKEN**.<br/>
-
-3. Click this to deploy the bot on heroku and fill out the required information. <br/>
-3.1 You can name it whatever you want, so you can recognize the project if you log in to heroku.<br/>
-
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/kjgdhrhrrgg/twitch_bot) <br/>
-
-
-4. Go to "Manage App" and then navigate to the Resources tab.
-5. **Disable** "web npm start" and **enable** "worker npm start".
-6. The bot should be running 24/7 now.
-7. Automatic updates aren't here yet. So if I update the bot, you have to manually delete the current version of the bot and deploy it from here again. 
-
-
 # Setup local
 
 I'm too lazy currently lol.
@@ -44,8 +23,8 @@ so only a few Streamer are supported currently.
 
 # Plan for the future
 
-Command to show wr time trials (150 and 200cc) <br/>
-Overlay for live scores, controlled via the twitch chat
+Command to show wr time trials (150 and 200cc), if there is an api for it <br/>
+
 
 # Support 
 

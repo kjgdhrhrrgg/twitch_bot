@@ -1,11 +1,12 @@
+const { json } = require('express');
 const tmi = require('tmi.js');
 require('dotenv').config();
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
 const mk8_id_url = 'https://www.mk8dx-lounge.com/api/player?mkcId=';
-const mk8_name_url = 'https://www.mk8dx-lounge.com/api/player?name=';
 const mk8_stats_url = 'https://www.mk8dx-lounge.com/api/player/details?name=';
-const mk8_table = 'https://www.mk8dx-lounge.com/TableDetails/'
+const mk8_table = 'https://www.mk8dx-lounge.com/TableDetails/';
+const mk8_api_table = 'https://www.mk8dx-lounge.com/api/table?tableId=';
 const regexpCommand = new RegExp(/^!([a-zA-Z0-9]+)(?:\W+)?(.*)?/);
 const commands = {
 	
@@ -24,7 +25,7 @@ const commands = {
 		response: (context, argument) => `${getID(context, argument)}`
 	},
 	help:{
-		response: (context, argument) => `${help(argument)}`
+		response: (context, argument) => `${help(context, argument)}`
 	},
 	db: {
 		response: (context, argument) => `${database(context, argument)}`
@@ -38,6 +39,12 @@ const commands = {
 	
 	nh: {
 		response: (context, argument) => `${nh(context, argument)}`
+	},
+	last: {
+		response: (context, argument) => `${last(context, argument)}`
+	},
+	calc: {
+		response: (context, argument) => `${calc(context, argument)}`
 	}
 }
 
@@ -46,16 +53,21 @@ const commands = {
 */
 
 var playerList = data_list();
+
+// Check if something contains numbers only (for lm, last, etc)
+function numbercheck(input) {
+	let regex = /^[0-9]+$/;
+	return regex.test(input);
+}
 // Can look up by lounge username for rank, if search for someone via the twitch username -> convert the lounge id to lounge username first
 function getRank(context, argument) {
-	console.log(context);
 	if (argument == null || argument == "") argument = context.username.toLowerCase();
 	if (argument.charAt(0)== '@') argument = argument.substring(1);
-	var id=mk8_stats_url+argument;
+	let id=mk8_stats_url+argument;
 	if (playerList.some(row => row.includes(argument.toLowerCase()))) id = convert_from_db(argument, mk8_stats_url);
 	
-	var rank_message = "";
-	var xhr = new XMLHttpRequest();
+	let rank_message = "";
+	let xhr = new XMLHttpRequest();
 	xhr.open("GET", id, false);
 	xhr.responseType = "document";
 	xhr.onerror = function() {
@@ -66,17 +78,8 @@ function getRank(context, argument) {
 		
 	xhr.onload = function() {
 		if (xhr.readyState == 4 && xhr.status == 200) {
-			var json_data = JSON.parse(this.responseText);
-			var data= [];
-			for (var i in json_data) {
-				data.push([i,json_data[i]]);
-			} 
-			if (data.length == 4) {
-				rank_message = `Rank of ${argument}: Not found.`;
-			} else {
-				rank_message = `Rank of ${argument}: ${data[data.length-3][1]}`;
-			}
-
+			let json_data = JSON.parse(this.responseText);
+			rank_message = `Rank of ${argument}:  ${json_data.overallRank} (${json_data.rank})`;
 		}
 	}
 	xhr.send();
@@ -89,11 +92,11 @@ function getRank(context, argument) {
 function getMMR(context, argument) {
 	if (argument == null || argument == "") argument = context.username.toLowerCase();
 	if (argument.charAt(0)== '@') argument = argument.substring(1);
-	var id=mk8_name_url+argument;
-	if (playerList.some(row => row.includes(argument.toLowerCase()))) id = convert_from_db(argument, mk8_name_url);
+	let id=mk8_stats_url+argument;
+	if (playerList.some(row => row.includes(argument.toLowerCase()))) id = convert_from_db(argument, mk8_stats_url);
 	
-	var mmr_message = "";
-	var xhr = new XMLHttpRequest();
+	let mmr_message = "";
+	let xhr = new XMLHttpRequest();
 	xhr.open("GET", id, false);
 	xhr.responseType = "document";
 	xhr.onerror = function() {
@@ -102,20 +105,8 @@ function getMMR(context, argument) {
 	}		
 	xhr.onload = function() {
 		if (xhr.readyState == 4 && xhr.status == 200) {
-			var json_data = JSON.parse(this.responseText);
-			var data= [];
-			for (var i in json_data) {
-				data.push([i,json_data[i]]);
-			} 
-			mmr_message = `MMR of ${argument}: Player not found`;
-			if(data.some(row => row.includes("mmr"))) {
-				for(var i in data) {
-					if (data[i][0] == 'mmr') {
-						mmr_message = `MMR of ${argument}: ${data[i][1]}`;
-						break;
-					}	
-				}	
-			}
+			let json_data = JSON.parse(this.responseText);
+			mmr_message = `MMR of ${argument}: ${json_data.mmr}`;
 		}
 	}
 	xhr.send();
@@ -126,11 +117,11 @@ function getMMR(context, argument) {
 function getPeak(context, argument) {
 	if (argument == null || argument == "") argument = context.username.toLowerCase();
 	if (argument.charAt(0)== '@') argument = argument.substring(1);
-	var id=mk8_name_url+argument;
-	if (playerList.some(row => row.includes(argument.toLowerCase()))) id = convert_from_db(argument, mk8_name_url);
+	let id=mk8_stats_url+argument;
+	if (playerList.some(row => row.includes(argument.toLowerCase()))) id = convert_from_db(argument, mk8_stats_url);
 	
-	var peak_message = "";
-	var xhr = new XMLHttpRequest();
+	let peak_message = "";
+	let xhr = new XMLHttpRequest();
 	xhr.open("GET", id, false);
 	xhr.responseType = "document";
 	xhr.onerror = function() {
@@ -139,20 +130,8 @@ function getPeak(context, argument) {
 	}		
 	xhr.onload = function() {
 		if (xhr.readyState == 4 && xhr.status == 200) {
-			var json_data = JSON.parse(this.responseText);
-			var data= [];
-			for (var i in json_data) {
-				data.push([i,json_data[i]]);
-			} 
-			peak_message = `Peak MMR of ${argument}: Player not found`;
-			if(data.some(row => row.includes("maxMmr"))) {
-				for(var i in data) {
-					if (data[i][0] == 'maxMmr') {
-						peak_message = `Peak MMR of ${argument}: ${data[i][1]}`;
-						break;
-					}	
-				}	
-			}
+			let json_data = JSON.parse(this.responseText);
+			peak_message = `Peak MMR of ${argument}: ${json_data.maxMmr}`;		
 		}
 	}
 	xhr.send();
@@ -164,29 +143,34 @@ function getPeak(context, argument) {
 function getID(context, argument) {
 	if (argument == null || argument == "") argument = context.username.toLowerCase();
 	if (argument.charAt(0)== '@') argument = argument.substring(1);
-	var id=mk8_stats_url+argument;
+	let id=mk8_stats_url+argument;
 	if (playerList.some(row => row.includes(argument.toLowerCase()))) id = convert_from_db(argument, mk8_stats_url);
 
-	var id_message = "";
-	var xhr = new XMLHttpRequest();
+	let id_message = "";
+	let xhr = new XMLHttpRequest();
 	xhr.open("GET", id, false);
 	xhr.responseType = "document";
 	xhr.onerror = function() {
 		console.error(xhr.status, xhr.statusText);
 		id_message = "Website is currently down";
-	}		
+	}
+
 	xhr.onload = function() {
 		if (xhr.readyState == 4 && xhr.status == 200) {
-			var json_data = JSON.parse(this.responseText);
-			var data= [];
-			for (var i in json_data) {
-				data.push([i,json_data[i]]);
-				
-			}
-			console.log(data);
-			if (data.length == 30) id_message = `Stats of ${argument}: Winrate ${data[13][1]} | `;
-			else {
-				id_message = `Stats page of ${argument}: kj is just too lazy to implement methods for placement/inactive players`;
+			let json_data = JSON.parse(this.responseText);
+			id_message = `Stats of ${argument}: 
+				Rank: ${json_data.overallRank} | 
+				Winrate: ${parseFloat(json_data.winRate*100).toFixed(2)}% | 
+				W-L: ${json_data.winLossLastTen} | 
+				PlayerAverage: - | 
+				PartnerAverage: -`;
+			if (json_data.hasOwnProperty("averageScore")) {
+				id_message = `Stats of ${argument}: 
+					Rank: ${json_data.overallRank} | 
+					Winrate: ${parseFloat(json_data.winRate*100).toFixed(2)}% | 
+					W-L: ${json_data.winLossLastTen} | 
+					PlayerAverage: ${json_data.averageScore.toFixed(1)} | 
+					PartnerAverage: ${json_data.partnerAverage.toFixed(1)}`;
 			}
 		}
 	}
@@ -198,32 +182,21 @@ function getID(context, argument) {
 function getFC(context, argument) {
 	if (argument == null || argument == "") argument = context.username.toLowerCase();
 	if (argument.charAt(0)== '@') argument = argument.substring(1);
-	var id=mk8_stats_url+argument;
+	let id=mk8_stats_url+argument;
 	if (playerList.some(row => row.includes(argument.toLowerCase()))) id = convert_from_db(argument, mk8_stats_url);
 	
-	var fc_message = "";
-	var xhr = new XMLHttpRequest();
+	let fc_message = "";
+	let xhr = new XMLHttpRequest();
 	xhr.open("GET", id, false);
 	xhr.responseType = "document";
 	xhr.onerror = function() {
 		console.error(xhr.status, xhr.statusText);
 		fc_message = "Website is currently down";
-	}
-		
-		
+	}	
 	xhr.onload = function() {
 		if (xhr.readyState == 4 && xhr.status == 200) {
-			var json_data = JSON.parse(this.responseText);
-			var data= [];
-			for (var i in json_data) {
-				data.push([i,json_data[i]]);
-			} 
-			if (data.length == 4) {
-				fc_message = `Friendcode of ${argument}: Not found.`;
-			} else {
-				fc_message = `Friendcode of ${argument}: ${data[6][1]}`;
-			}
-
+			let json_data = JSON.parse(this.responseText);
+			fc_message = `Friendcode of ${argument}: ${json_data.switchFc}`;
 		}
 	}
 	xhr.send();
@@ -235,14 +208,13 @@ function getFC(context, argument) {
 // don't know if this part is skipable (maybe through jQuery but idk) once it got updated. (It should, but I'm not sure)
 
 function data_list(){
-	var db = [];
-	var xhr = new XMLHttpRequest();
+	let db = [];
+	let xhr = new XMLHttpRequest();
 	xhr.open("GET", "https://raw.githubusercontent.com/kjgdhrhrrgg/twitch_bot_db/master/data-list.json", false);
 	xhr.onreadystatechange = function() {
 		if (xhr.readyState == 4 && xhr.status == 200) {
-			var test = JSON.parse(this.responseText);
-			console.log(test);
-			for (var i in test) {
+			let test = JSON.parse(this.responseText);
+			for (let i in test) {
 				db.push([i,test[i]]);
 			}
 		}
@@ -252,18 +224,17 @@ function data_list(){
 }
 
 
-
 function convert_from_db(argument, link) {
-	var id = "";
+	let id = "";
 	playerList = data_list();
-	for (var i in playerList) {
+	for (let i in playerList) {
 		if (argument.toLowerCase() == playerList[i][0]) {
 			id = mk8_id_url+playerList[i][1];
 			break
 		}
 	}
-	var id_message = "";
-	var xhr = new XMLHttpRequest();
+	let id_message = "";
+	let xhr = new XMLHttpRequest();
 	xhr.open("GET", id, false);
 	xhr.responseType = "document";
 	xhr.onerror = function() {
@@ -272,19 +243,8 @@ function convert_from_db(argument, link) {
 	}		
 	xhr.onload = function() {
 		if (xhr.readyState == 4 && xhr.status == 200) {
-			var json_data = JSON.parse(this.responseText);
-			var data= [];
-			for (var i in json_data) {
-				data.push([i,json_data[i]]);
-			} 
-			if(data.some(row => row.includes("id"))) {
-				for(var i in data) {
-					if (data[i][0] == 'name') {
-						id_message = link+data[i][1];
-						break;
-					}	
-				}	
-			}
+			let json_data = JSON.parse(this.responseText);
+			id_message=link+json_data.name
 		}
 	}
 	xhr.send();
@@ -298,30 +258,47 @@ function database(context, argument) {
 	
 	if (argument == null || argument == "") argument = context.username.toLowerCase();
 	if (argument.charAt(0)== '@') argument = argument.substring(1);
-	var db_msg = `${argument} is not in the database. Message @kj_mk8dx on twitter, so he can add you to the database`;
+	let db_msg = `${argument} is not in the database. Message @kj_mk8dx on twitter, so he can add you to the database`;
 	if (playerList.some(row => row.includes(argument.toLowerCase()))) db_msg = `${argument} is in the database.`
 	return db_msg;
 
 }
 
 // Get data from any mogi 
+// Format: !lm <name>,<number> / 
 
 
 function lm(context, argument) {
-	if (argument == null || argument == "") argument = context.username.toLowerCase();
-	var arg = [];
-	var lmarg = ["",""];
+	// arg["name","number"]
+	let arg = [];
+	// no input
+	if (argument == null || argument == "") {
+		argument = context.username.toLowerCase();
+		arg[0]=argument;
+		arg[1]=0;
+	}
+	// 
+	if (numbercheck(argument)) {
+		arg[1] = parseInt(argument)-1;
+		argument = context.username.toLowerCase();
+		arg[0] = argument;
+	} else {
+		arg[1] = 0;
+		if (argument.charAt(0)== '@') argument = argument.substring(1);
+		arg[0] = argument;
+	}
 	if (argument.includes(",")) {
 		arg = argument.split(',');
-		argument = arg[1];
+		if (arg[0].charAt(0)== '@') arg[0] = arg[0].substring(1);
+		console.log(arg[1]);
+		arg[1] = parseInt(arg[1])-1
 	}
-	console.log(argument);
-	if (argument.charAt(0)== '@') argument = argument.substring(1);
-	var id = mk8_stats_url+argument;
-	if (playerList.some(row => row.includes(argument.toLowerCase()))) id = convert_from_db(argument, mk8_stats_url);
+	
+	let id = mk8_stats_url+arg[0];
+	if (playerList.some(row => row.includes(arg[0].toLowerCase()))) id = convert_from_db(arg[0], mk8_stats_url);
 
-	var xhr = new XMLHttpRequest();
-	var lm_message = "";
+	let xhr = new XMLHttpRequest();
+	let lm_message = "";
 	xhr.open("GET", id, false);
 	xhr.responseType = "document";
 	xhr.onerror = function() {
@@ -337,34 +314,167 @@ function lm(context, argument) {
 	
 	xhr.onload = function() {
 		if (xhr.readyState == 4 && xhr.status == 200) {
-			var json_data = JSON.parse(this.responseText);
-			var testIndex = arg[0]-1;
-			if (json_data.mmrChanges && json_data.mmrChanges[testIndex] && testIndex > 0) {
-  				var item = json_data.mmrChanges[testIndex];
-				var win = 'Lose';
-				var format = 'FFA';
+			let json_data = JSON.parse(this.responseText);
+			let testIndex = arg[1];
+			if (json_data.mmrChanges && json_data.mmrChanges[testIndex] && testIndex >= 0 && json_data.mmrChanges[testIndex].reason == "Table") {
+  				let item = json_data.mmrChanges[testIndex];
+				let win = 'Lose';
+				let format = 'FFA';
 				if (item.mmrDelta >= 0) win = 'Win';
 				if (item.partnerIds.length > 0 ) format = `${item.partnerIds.length + 1}v${item.partnerIds.length + 1}`
-				if (item.reason == 'Table') {
-					lm_message = `Last Match of ${argument}: ${win} (${item.mmrDelta} MMR) |
+				lm_message = `Last Match of ${arg[0]}: ${win} (${item.mmrDelta} MMR) |
 					Format: Tier ${item.tier} ${format} |
 					own Score: ${item.score} |
 					Team Placement: ${item.rank} of ${item.numTeams} |
 					TableID: ${mk8_table+item.changeId} `
-				} else {
-					lm_message = "Last Match is either a strike, placement or not found."
-				}
-
 			} else {
 				lm_message = "Last Match is either a strike, placement or not found."
 			}
 		}
+		if (xhr.status == 404) lm_message = `${arg[0]} not found. Have you typed the wrong command format?`
 	}
 	xhr.send();
 	return lm_message;
-
-
 }
+
+function last(context, argument) {
+	// arg["name","number"]
+	let arg = [];
+	// no input
+	if (argument == null || argument == "") {
+		argument = context.username.toLowerCase();
+		arg[0]=argument;
+		arg[1]=1;
+	}
+	// 
+	if (numbercheck(argument)) {
+		arg[1] = parseInt(argument);
+		argument = context.username.toLowerCase();
+		arg[0] = argument;
+	} else {
+		arg[1] = 1;
+		if (argument.charAt(0)== '@') argument = argument.substring(1);
+		arg[0] = argument;
+	}
+	if (argument.includes(",")) {
+		arg = argument.split(',');
+		if (arg[0].charAt(0)== '@') arg[0] = arg[0].substring(1);
+		arg[1] = parseInt(arg[1]);
+	}
+	
+	let id = mk8_stats_url+arg[0];
+	if (playerList.some(row => row.includes(arg[0].toLowerCase()))) id = convert_from_db(arg[0], mk8_stats_url);
+
+	let xhr = new XMLHttpRequest();
+	let last_message = "";
+	xhr.open("GET", id, false);
+	xhr.responseType = "document";
+	xhr.onerror = function() {
+		console.error(xhr.status, xhr.statusText);
+		last_message = "Website is currenty down";
+	}		
+	
+	// Quick reminder how mmrChanges works
+	// shows tables, placements and strikes etc
+	// table.length = 11 always!!
+	// last match shows if win or loss, and (team) placement
+	
+	
+	xhr.onload = function() {
+		if (xhr.readyState == 4 && xhr.status == 200) {
+			let json_data = JSON.parse(this.responseText);
+			let win = 0;
+			let loss = 0;
+			let avgsc = 0;
+			let pavgsc = 0;
+			let icounter = arg[1];
+			let mmrdiff = 0;
+			let ffacounter = 0;
+			for (let i = 0; i < icounter; i++) {
+				if (json_data.mmrChanges[i].reason != "Table" ) {
+					icounter++;
+					continue ;
+				}
+				avgsc += json_data.mmrChanges[i].score;
+				mmrdiff += json_data.mmrChanges[i].mmrDelta;
+				
+				if (json_data.mmrChanges[i].mmrDelta > 0) {
+					win++;
+				} else {
+					loss++;
+				}
+				
+				if (json_data.mmrChanges[i].partnerScores.length>1) {
+					let pScores = 0;
+					for (let j in json_data.mmrChanges[i].partnerScores){
+						pScores += json_data.mmrChanges[i].partnerScores[j];
+					}
+					pavgsc += pScores/json_data.mmrChanges[i].partnerScores.length;
+				} 
+				if (json_data.mmrChanges[i].numTeams == "12") {
+					pavgsc += 0;
+					ffacounter++;
+				} 
+				else {
+					pavgsc += json_data.mmrChanges[i].partnerScores[0];
+				}
+			}			
+			
+			avgsc = avgsc/icounter;
+			pavgsc = pavgsc/(icounter-ffacounter);
+			last_message = `Last ${icounter} matches of ${arg[0]}: Win Rate: ${(win/(win+loss)*100).toFixed(1)}% | 
+			W-L: ${win} - ${loss} |  
+			+/-: ${mmrdiff} | 
+			Avg. Score: ${avgsc} | 
+			Partner Avg.: ${pavgsc}`;
+
+		}
+		if (xhr.status == 404) last_message = `${arg[0]} not found. Have you typed the wrong command format?`
+	}
+	xhr.send();
+	return last_message;
+}
+
+function calc(context, argument){
+	let calc_message;
+	let id;
+	if (argument == null || argument == "") calc_message = "Not enough data was given";
+	else if (numbercheck(argument)) {
+		id = mk8_api_table+argument;
+		let xhr = new XMLHttpRequest();
+		xhr.open("GET", id, false);
+		xhr.responseType = "document";
+		xhr.onerror = function() {
+			console.error(xhr.status, xhr.statusText);
+			calc_message = "Website is currently down";
+		}	
+		xhr.onload = function() {
+			if (xhr.readyState == 4 && xhr.status == 200) {
+				let json_data = JSON.parse(this.responseText);
+				calc_message = `Expected MMR Changes for TableID ${argument}: `		
+				for (i in json_data.teams) {
+					for (j in json_data.teams[i].scores) {
+						if (j == json_data.teams[i].scores.length-1 && i == json_data.teams.length-1) {
+							calc_message += `${json_data.teams[i].scores[j].playerName} (${json_data.teams[i].scores[j].delta})`;
+						}
+						else if (j == json_data.teams[i].scores.length-1) {
+							calc_message += `${json_data.teams[i].scores[j].playerName} (${json_data.teams[i].scores[j].delta}) | `;
+						} else {
+							calc_message += `${json_data.teams[i].scores[j].playerName}, `;
+						}		
+					}
+				}
+			}
+		}
+		xhr.send();
+
+	}
+	else if (argument.includes(",")) {
+		id = argument
+	}
+	return calc_message;
+}
+
 
 // Name history doesn't work as intented, have to look after my exams
 // Kinda works now, thanks to @Chaos375 
@@ -373,11 +483,11 @@ function lm(context, argument) {
 function nh(context, argument) {
 	if (argument == null || argument == "") argument = context.username.toLowerCase();
 	if (argument.charAt(0)== '@') argument = argument.substring(1);
-	var id=mk8_stats_url+argument;
+	let id=mk8_stats_url+argument;
 	if (playerList.some(row => row.includes(argument.toLowerCase()))) id = convert_from_db(argument, mk8_stats_url);
 	
-	var nh_message = "";
-	var xhr = new XMLHttpRequest();
+	let nh_message = "";
+	let xhr = new XMLHttpRequest();
 	xhr.open("GET", id, false);
 	xhr.responseType = "document";
 	xhr.onerror = function() {
@@ -388,22 +498,12 @@ function nh(context, argument) {
 		
 	xhr.onload = function() {
 		if (xhr.readyState == 4 && xhr.status == 200) {
-			var json_data = JSON.parse(this.responseText);
-			var data = [];
-			var names = [];
-			
-			for (var i in json_data) {
-				data.push([i,json_data[i]]);
+			let json_data = JSON.parse(this.responseText);
+			let names = [];
+			for (let i in json_data.nameHistory) {
+				names.push(json_data.nameHistory[i].name)
 			}
-			for (var i in data[data.length-4][1]) {
-				names.push(data[data.length-4][1][i].name)
-			}
-			if (data.length == 4) {
-				nh_message = `Name history of ${argument}: Not found.`;
-			} else {
-				nh_message = `Name history of ${argument}: ${names}`;
-			}
-
+			nh_message = `Name history of ${argument}: ${names}`;
 		}
 	}
 	xhr.send();
@@ -414,7 +514,7 @@ function nh(context, argument) {
 // Show all help messages
 
 function help(argument) {
-	var help_msg = "";
+	let help_msg = "";
 	if (argument == null || argument == "") argument = "something else"
 	switch(argument.toLowerCase()) {
 		case "mmr": 
