@@ -58,22 +58,15 @@ function convert_from_db(argument, link) {
 var playerList = data_list();
 
 module.exports = {
-	mk8_api_table,
-	mk8_stats_url,
-	mk8_table,
-	playerList,
-	convert_from_db,
-	data_list,
-	numbercheck,
-	getMMR: require('./getMMR'),
-	getRank: require('./getRank'),
-	getPeak: require('./getPeak'),
-	getStats: require('./getStats'),
-	getNH: require('./getNH'),
-	getFC: require('./getFC'),
+	getMMR: require('./getMMR')(playerList,mk8_stats_url, convert_from_db),
+	getRank: require('./getRank')(playerList, mk8_stats_url, convert_from_db),
+	getPeak: require('./getPeak')(playerList, mk8_stats_url, convert_from_db),
+	getStats: require('./getStats')(playerList, mk8_stats_url, convert_from_db),
+	getNH: require('./getNH')(playerList, mk8_stats_url, convert_from_db),
+	getFC: require('./getFC')(playerList, mk8_stats_url, convert_from_db),
 	getHelp: require('./getHelp'),
-	getCalc: require('./getCalc'),
-	getLast: require('./getLast'),
-	getLM: require('./getLM'),
-	checkDB: require('./checkDB')
+	getCalc: require('./getCalc')(mk8_api_table, numbercheck),
+	getLast: require('./getLast')(playerList, mk8_stats_url, convert_from_db, numbercheck),
+	getLM: require('./getLM')(playerList, mk8_stats_url, mk8_table,convert_from_db, numbercheck),
+	checkDB: require('./checkDB')(playerList)
 }

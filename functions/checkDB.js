@@ -1,6 +1,5 @@
-const playerList = require('./index.js').data_list;
-
-function database(context, argument) {
+module.exports = function(playerList){
+	return function database(context, argument) {
 	
 	if (argument == null || argument == "") argument = context.username.toLowerCase();
 	if (argument.charAt(0)== '@') argument = argument.substring(1);
@@ -9,5 +8,4 @@ function database(context, argument) {
 	return db_msg;
 
 }
-
-module.exports = database;
+};

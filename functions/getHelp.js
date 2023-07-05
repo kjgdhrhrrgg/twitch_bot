@@ -1,7 +1,13 @@
 function help(argument) {
 	let help_msg = "";
-	if (argument == null || argument == "") argument = "something else"
-	switch(argument.toLowerCase()) {
+	if (typeof argument === 'string') {
+		argument = argument.toLowerCase();
+	  } else {
+		// If argument is not provided or not a string, set it to an empty string
+		argument = "";
+	  }	
+	  console.log(argument);
+	  switch(argument) {
 		case "mmr": 
 			help_msg = "The mmr command will show the MMR of a certain player for 150 cc Lounge. Use !mmr to show your own MMR, !mmr <twitch_name/lounge_name> for that users MMR";
 			break;
