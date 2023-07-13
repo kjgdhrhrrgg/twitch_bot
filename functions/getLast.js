@@ -85,10 +85,10 @@ module.exports = function(playerList,mk8_stats_url,convert_from_db,numbercheck){
 				}			
 				
 				avgsc = avgsc/icounter;
-				pavgsc = pavgsc/(icounter-ffacounter);
+				pavgsc = (pavgsc/(icounter-ffacounter)).toFixed(1);
 				last_message = `Last ${icounter} matches of ${arg[0]}: Win Rate: ${(win/(win+loss)*100).toFixed(1)}% | 
 				W-L: ${win} - ${loss} |  
-				+/-: ${mmrdiff} | 
+				+/- MMR: ${mmrdiff > 0 ? `+${mmrdiff}` : mmrdiff} | 
 				Avg. Score: ${avgsc} | 
 				Partner Avg.: ${pavgsc}`;
 	

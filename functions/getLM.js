@@ -49,7 +49,7 @@ module.exports = function(playerList,mk8_stats_url, mk8_table, convert_from_db,n
 					let format = 'FFA';
 					if (item.mmrDelta >= 0) win = 'Win';
 					if (item.partnerIds.length > 0 ) format = `${item.partnerIds.length + 1}v${item.partnerIds.length + 1}`
-					lm_message = `Last Match of ${arg[0]}: ${win} (${item.mmrDelta} MMR) |
+					lm_message = `Last Match of ${arg[0]}: ${win} (${item.mmrDelta >= 0 ? `+${item.mmrDelta}` : item.mmrDelta} MMR) |
 						Format: Tier ${item.tier} ${format} |
 						own Score: ${item.score} |
 						Team Placement: ${item.rank} of ${item.numTeams} |

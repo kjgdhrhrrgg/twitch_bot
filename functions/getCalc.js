@@ -20,14 +20,17 @@ module.exports = function(mk8_api_table, numbercheck){
 					calc_message = `Expected MMR Changes for TableID ${argument}: `		
 					for (i in json_data.teams) {
 						for (j in json_data.teams[i].scores) {
-							if (j == json_data.teams[i].scores.length-1 && i == json_data.teams.length-1) {
-								calc_message += `${json_data.teams[i].scores[j].playerName} (${json_data.teams[i].scores[j].delta})`;
-							}
-							else if (j == json_data.teams[i].scores.length-1) {
-								calc_message += `${json_data.teams[i].scores[j].playerName} (${json_data.teams[i].scores[j].delta}) | `;
+							const mmr = json_data.teams[i].scores[j].delta;
+							const playerName = json_data.teams[i].scores[j].playerName;
+							const formattedMMR = mmr > 0 ? `+${mmr}` : mmr;
+
+							if (j == json_data.teams[i].scores.length - 1 && i == json_data.teams.length - 1) {
+								calc_message += `${playerName} (${formattedMMR} MMR)`;
+							} else if (j == json_data.teams[i].scores.length - 1) {
+								calc_message += `${playerName} (${formattedMMR} MMR) | `;
 							} else {
-								calc_message += `${json_data.teams[i].scores[j].playerName}, `;
-							}		
+								calc_message += `${playerName}, `;
+							}
 						}
 					}
 				}
@@ -44,9 +47,27 @@ module.exports = function(mk8_api_table, numbercheck){
 			if (numbercheck(arg[0]) && numbercheck(arg[1])) {
 				arg[0] = parseInt(arg[0]);
 				arg[1] = parseInt(arg[1]);
-				if (teamsize.includes(arg[0]) && arg[1]<=12/arg[0] && arg[1>0]) {
+				names = []
+				if (teamsize.includes(arg[0]) && arg[1]<=12/arg[0] && arg[1]>0) {
 					//code to calculate starts here
-					
+					for (let i = 2; i <= 14; i++) {
+						let xhr = new XMLHttpRequest();
+						id = mk8_api_table+arg[i];
+						xhr.open("GET", id, false);
+						xhr.responseType = "document";
+						xhr.onerror = function() {
+							console.error(xhr.status, xhr.statusText);
+							calc_message = "Website is currently down";
+						}	
+						xhr.onload = function() {
+							if (xhr.readyState == 4 && xhr.status == 200) {
+								let json_data = JSON.parse(this.responseText);
+								calc_message = `Expected MMR Changes for TableID ${argument}: `		
+								names.push(json_data.mmr)
+							}
+						}
+						xhr.send();
+					}
 				}
 				else console.log("pass unsuccessful");//
 			}
