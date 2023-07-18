@@ -65,7 +65,7 @@ module.exports = {
 	getNH: require('./getNH')(playerList, mk8_stats_url, convert_from_db),
 	getFC: require('./getFC')(playerList, mk8_stats_url, convert_from_db),
 	getHelp: require('./getHelp'),
-	getCalc: require('./getCalc')(mk8_api_table, numbercheck),
+	getCalc: require('./getCalc')(mk8_stats_url, mk8_api_table, numbercheck),
 	getLast: require('./getLast')(playerList, mk8_stats_url, convert_from_db, numbercheck),
 	getLM: require('./getLM')(playerList, mk8_stats_url, mk8_table,convert_from_db, numbercheck),
 	checkDB: require('./checkDB')(playerList)
